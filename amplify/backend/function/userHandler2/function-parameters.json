@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "storage": {
+      "userTable2": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

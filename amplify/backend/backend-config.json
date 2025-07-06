@@ -1,0 +1,44 @@
+{
+  "function": {
+    "userHandler2": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "userTable2"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_userHandler2_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "userHandler2"
+        }
+      ]
+    },
+    "AMPLIFY_function_userHandler2_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "userHandler2"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "userTable2": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
+    }
+  }
+}
