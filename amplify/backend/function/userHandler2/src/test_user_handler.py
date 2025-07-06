@@ -2,39 +2,44 @@ import os
 import pytest
 import boto3
 from moto import mock_dynamodb
-# Définit la variable d'environnement AVANT import d'index.py dans la vraie vie
+import index  # Doit être importé *après* avoir défini la variable d'env
+
+# Définir la variable d'environnement AVANT l'utilisation de boto3
 os.environ['STORAGE_USERTABLE2_NAME'] = "user2"
-import index
-
-
-
 TABLE_NAME = os.environ['STORAGE_USERTABLE2_NAME']
 
 @pytest.fixture
 def mock_dynamo_table(monkeypatch):
     with mock_dynamodb():
-        # Création de la table mockée
-        client = boto3.client('dynamodb', region_name='eu-west-1')
-        client.create_table(
+        # Création de la table DynamoDB mockée
+        dynamodb = boto3.resource('dynamodb', region_name='eu-west-1')
+        table = dynamodb.create_table(
             TableName=TABLE_NAME,
-            KeySchema=[{'AttributeName': 'user_id', 'KeyType': 'HASH'}],
-            AttributeDefinitions=[{'AttributeName': 'user_id', 'AttributeType': 'S'}],
+            KeySchema=[
+                {'AttributeName': 'user_id', 'KeyType': 'HASH'}
+            ],
+            AttributeDefinitions=[
+                {'AttributeName': 'user_id', 'AttributeType': 'S'}
+            ],
             BillingMode='PAY_PER_REQUEST'
         )
+        table.wait_until_exists()
 
-        # Patch la table dans index.py pour utiliser la table mockée
-        dynamodb = boto3.resource('dynamodb', region_name='eu-west-1')
-        table = dynamodb.Table(TABLE_NAME)
+        # Patch dans le module index pour utiliser la table mockée
         monkeypatch.setattr(index, 'table', table)
 
-        yield
+        yield  # Laisse le test utiliser ce setup
 
 def test_add_and_get_user(mock_dynamo_table):
     user_id = 'u001'
     name = 'Alice'
     email = 'alice@example.com'
 
-    index.add_user(user_id, name, email)
+    # Ajouter un utilisateur
+    response = index.add_user(user_id, name, email)
+    assert response['message'] == f"User {user_id} added successfully."
+
+    # Récupérer l'utilisateur
     user = index.get_user(user_id)
     assert user is not None
     assert user['user_id'] == user_id

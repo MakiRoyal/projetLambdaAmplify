@@ -1,6 +1,6 @@
 {
   "action": "add",
   "user_id": "u123",
-  "name": "Bob",
-  "email": "bob@example.com"
+  "name": "Alice",
+  "email": "alice@example.com"
 }
