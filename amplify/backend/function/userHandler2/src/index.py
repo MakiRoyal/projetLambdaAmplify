@@ -2,10 +2,10 @@ import boto3
 import os
 from boto3.dynamodb.conditions import Key
 
-# Connexion à DynamoDB AWS (pas local)
+
 dynamodb = boto3.resource('dynamodb')
 
-# Nom de la table DynamoDB injecté par Amplify (via variable d’environnement)
+
 table_name = os.environ['STORAGE_USERTABLE2_NAME']
 table = dynamodb.Table(table_name)
 
